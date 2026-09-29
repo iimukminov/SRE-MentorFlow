@@ -1,0 +1,1 @@
+ALTER TABLE roadmap_steps ADD COLUMN actual_commits INTEGER DEFAULT 0;

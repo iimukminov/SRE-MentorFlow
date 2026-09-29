@@ -1,0 +1,900 @@
+openapi: 3.0.3
+info:
+  title: MentorFlow API
+  version: 1.0.0
+  description: REST API for Mentorship and Consultations platform
+paths:
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+    post:
+      tags:
+        - Users
+      summary: Create new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateDto'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+  /api/v1/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: User successfully deleted
+
+  /api/v1/roadmaps:
+    get:
+      tags:
+        - Roadmaps
+      summary: Get list of roadmaps (optionally filtered by mentor or mentee)
+      operationId: getRoadmaps
+      parameters:
+        - name: mentorId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: menteeId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoadmapDto'
+    post:
+      tags:
+        - Roadmaps
+      summary: Create a new roadmap
+      operationId: createRoadmap
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoadmapCreateDto'
+      responses:
+        '201':
+          description: Roadmap created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapDto'
+
+  /api/v1/roadmaps/{id}:
+    get:
+      tags:
+        - Roadmaps
+      summary: Get roadmap by ID
+      operationId: getRoadmapById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapDto'
+        '404':
+          description: Roadmap not found
+    delete:
+      tags:
+        - Roadmaps
+      summary: Delete roadmap
+      operationId: deleteRoadmap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Roadmap successfully deleted
+
+  /api/v1/roadmaps/{roadmapId}/steps:
+    get:
+      tags:
+        - Roadmap Steps
+      summary: Get all steps for a specific roadmap
+      operationId: getRoadmapSteps
+      parameters:
+        - name: roadmapId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoadmapStepDto'
+    post:
+      tags:
+        - Roadmap Steps
+      summary: Add a new step to a roadmap
+      operationId: addStepToRoadmap
+      parameters:
+        - name: roadmapId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoadmapStepCreateDto'
+      responses:
+        '201':
+          description: Step created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapStepDto'
+
+  /api/v1/steps/{id}:
+    get:
+      tags:
+        - Roadmap Steps
+      summary: Get step by ID
+      operationId: getStepById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapStepDto'
+    delete:
+      tags:
+        - Roadmap Steps
+      summary: Delete step
+      operationId: deleteStep
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Step successfully deleted
+
+  /api/v1/steps/{id}/sync:
+    post:
+      tags:
+        - Roadmap Steps
+      summary: Принудительно синхронизировать шаг с GitHub
+      operationId: syncStep
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapStepDto'
+
+  /api/v1/steps/{id}/status:
+    patch:
+      tags:
+        - Roadmap Steps
+      summary: Change step status
+      operationId: changeStepStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoadmapStepStatusUpdateDto'
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapStepDto'
+
+  /api/v1/consultations:
+    get:
+      tags:
+        - Consultations
+      summary: Get list of consultations (optionally filtered by mentor or mentee)
+      operationId: getConsultations
+      parameters:
+        - name: mentorId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: menteeId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsultationDto'
+    post:
+      tags:
+        - Consultations
+      summary: Schedule a new consultation
+      operationId: createConsultation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationCreateDto'
+      responses:
+        '201':
+          description: Consultation scheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationDto'
+
+  /api/v1/consultations/{id}:
+    get:
+      tags:
+        - Consultations
+      summary: Get consultation by ID
+      operationId: getConsultationById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationDto'
+    patch:
+      tags:
+        - Consultations
+      summary: Update consultation status or meet link
+      operationId: updateConsultation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationUpdateDto'
+      responses:
+        '200':
+          description: Consultation updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationDto'
+    delete:
+      tags:
+        - Consultations
+      summary: Cancel/Delete consultation
+      operationId: deleteConsultation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Consultation successfully deleted
+
+  /api/v1/steps/{stepId}/feedback:
+    get:
+      tags:
+        - Review Feedback
+      summary: Get feedback for a specific roadmap step
+      operationId: getFeedbackByStepId
+      parameters:
+        - name: stepId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewFeedbackDto'
+        '404':
+          description: Feedback not found
+    post:
+      tags:
+        - Review Feedback
+      summary: Add or update feedback for a roadmap step
+      operationId: addFeedbackToStep
+      parameters:
+        - name: stepId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewFeedbackCreateDto'
+      responses:
+        '201':
+          description: Feedback created/updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewFeedbackDto'
+
+  /api/v1/board:
+    get:
+      tags:
+        - Board
+      summary: Получить список активных объявлений
+      operationId: getAdvertisements
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            description: "SEEKING_MENTOR или SEEKING_MENTEE"
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementDto'
+    post:
+      tags:
+        - Board
+      summary: Создать объявление
+      operationId: createAdvertisement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvertisementCreateDto'
+      responses:
+        '201':
+          description: Создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvertisementDto'
+
+  /api/v1/board/{id}/reply:
+    post:
+      tags:
+        - Board
+      summary: Откликнуться на объявление
+      operationId: replyToAdvertisement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionRequestCreateDto'
+      responses:
+        '201':
+          description: Отклик отправлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRequestDto'
+
+  /api/v1/connections/requests:
+    get:
+      tags:
+        - Connections
+      summary: Получить входящие отклики на свои объявления
+      operationId: getIncomingRequests
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionRequestDto'
+
+  /api/v1/connections/requests/{id}:
+    patch:
+      tags:
+        - Connections
+      summary: Принять или отклонить отклик
+      operationId: updateRequestStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionRequestStatusUpdateDto'
+      responses:
+        '200':
+          description: Статус обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRequestDto'
+
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        githubUsername:
+          type: string
+
+    UserCreateDto:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        githubUsername:
+          type: string
+
+    RoadmapDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        mentorId:
+          type: integer
+          format: int64
+        mentorUsername:
+          type: string
+        menteeId:
+          type: integer
+          format: int64
+        menteeUsername:
+          type: string
+        maxAfkDays:
+          type: integer
+        meetLink:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoadmapStepDto'
+
+    RoadmapCreateDto:
+      type: object
+      required:
+        - mentorId
+        - menteeId
+        - title
+      properties:
+        mentorId:
+          type: integer
+          format: int64
+        menteeId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        maxAfkDays:
+          type: integer
+        meetLink:
+          type: string
+
+    RoadmapStepDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        stepOrder:
+          type: integer
+        title:
+          type: string
+        contentLink:
+          type: string
+        requiredCommits:
+          type: integer
+        status:
+          type: string
+          description: "Enum: LOCKED, IN_PROGRESS, REVIEW, DONE"
+        roadmapId:
+          type: integer
+          format: int64
+        startedAt:
+          type: string
+          format: date-time
+        actualCommits:
+          type: integer
+        reviewFeedback:
+          $ref: '#/components/schemas/ReviewFeedbackDto'
+
+    RoadmapStepCreateDto:
+      type: object
+      required:
+        - stepOrder
+        - title
+      properties:
+        stepOrder:
+          type: integer
+        title:
+          type: string
+        contentLink:
+          type: string
+        requiredCommits:
+          type: integer
+
+    RoadmapStepStatusUpdateDto:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: "Enum: LOCKED, IN_PROGRESS, REVIEW, DONE"
+
+    ConsultationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        scheduledTime:
+          type: string
+          format: date-time
+        meetLink:
+          type: string
+        status:
+          type: string
+          description: "Enum: SCHEDULED, COMPLETED, CANCELLED"
+        mentorId:
+          type: integer
+          format: int64
+        mentorUsername:
+          type: string
+        menteeId:
+          type: integer
+          format: int64
+        menteeUsername:
+          type: string
+
+    ConsultationCreateDto:
+      type: object
+      required:
+        - mentorId
+        - menteeId
+        - scheduledTime
+      properties:
+        mentorId:
+          type: integer
+          format: int64
+        menteeId:
+          type: integer
+          format: int64
+        scheduledTime:
+          type: string
+          format: date-time
+
+    ConsultationUpdateDto:
+      type: object
+      properties:
+        status:
+          type: string
+          description: "Enum: SCHEDULED, COMPLETED, CANCELLED"
+        meetLink:
+          type: string
+
+    ReviewFeedbackDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        comments:
+          type: string
+        isApproved:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        roadmapStepId:
+          type: integer
+          format: int64
+        mentorId:
+          type: integer
+          format: int64
+        mentorUsername:
+          type: string
+
+    ReviewFeedbackCreateDto:
+      type: object
+      required:
+        - comments
+        - isApproved
+        - mentorId
+      properties:
+        comments:
+          type: string
+        isApproved:
+          type: boolean
+        mentorId:
+          type: integer
+          format: int64
+
+    AdvertisementDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        authorId:
+          type: integer
+          format: int64
+        authorUsername:
+          type: string
+        type:
+          type: string
+          description: "SEEKING_MENTOR или SEEKING_MENTEE"
+        title:
+          type: string
+        content:
+          type: string
+        status:
+          type: string
+          description: "ACTIVE или CLOSED"
+        createdAt:
+          type: string
+          format: date-time
+
+    AdvertisementCreateDto:
+      type: object
+      required:
+        - authorId
+        - type
+        - title
+        - content
+      properties:
+        authorId:
+          type: integer
+          format: int64
+        type:
+          type: string
+          description: "SEEKING_MENTOR или SEEKING_MENTEE"
+        title:
+          type: string
+        content:
+          type: string
+
+    ConnectionRequestDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: uuid
+        advertisementId:
+          type: integer
+          format: int64
+        advertisementTitle:
+          type: string
+        senderId:
+          type: integer
+          format: int64
+        senderUsername:
+          type: string
+        coverLetter:
+          type: string
+        status:
+          type: string
+          description: "PENDING, ACCEPTED, REJECTED"
+        createdAt:
+          type: string
+          format: date-time
+
+    ConnectionRequestCreateDto:
+      type: object
+      required:
+        - senderId
+      properties:
+        senderId:
+          type: integer
+          format: int64
+        coverLetter:
+          type: string
+
+    ConnectionRequestStatusUpdateDto:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: "ACCEPTED или REJECTED"

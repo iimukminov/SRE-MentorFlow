@@ -1,0 +1,43 @@
+### 1. Получение списка пользователей
+GET http://localhost:8080/api/v1/users
+Accept: application/json
+
+### 2. Регистрация нового пользователя (POST)
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+
+{
+  "username": "api_test_user",
+  "password": "password123",
+  "email": "api@test.com",
+  "githubUsername": "octocat"
+}
+
+### 3. Авторизация (Login для получения куки сессии)
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=api_test_user&password=password123
+
+### 4. Получение активных заявок на бирже
+GET http://localhost:8080/api/v1/board
+Accept: application/json
+
+### 5. Создание заявки на бирже (Требуется CSRF)
+POST http://localhost:8080/api/v1/board
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "type": "SEEKING_MENTOR",
+  "title": "Ищу ментора по API",
+  "content": "Хочу изучить Spring REST"
+}
+
+### 6. Получение дорожных карт текущего пользователя
+GET http://localhost:8080/api/v1/roadmaps
+Accept: application/json
+
+### 7. Принудительная синхронизация шага с GitHub
+POST http://localhost:8080/api/v1/steps/1/sync
+Accept: application/json

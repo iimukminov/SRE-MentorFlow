@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: semester-work-spring-iimukminov
+
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    cache: false
+    charset: UTF-8
+
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+app:
+  redis:
+    cache:
+      ttl-minutes: 1m
+  github:
+    client:
+      connect-timeout: 10s
+      read-timeout: 10s
+      sync-interval: 10m
+      token: ${GITHUB_TOKEN}
+
+server:
+  shutdown: graceful

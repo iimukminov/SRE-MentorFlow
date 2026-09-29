@@ -1,0 +1,2 @@
+ALTER TABLE roadmaps ADD COLUMN max_afk_days INTEGER DEFAULT 5;
+ALTER TABLE roadmaps ADD COLUMN meet_link VARCHAR(255);
