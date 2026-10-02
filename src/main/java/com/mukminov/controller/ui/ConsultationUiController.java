@@ -21,7 +21,7 @@ public class ConsultationUiController {
 
     @GetMapping("/consultations")
     public String getConsultationsPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = userDetails.getId();
 
         model.addAttribute("currentUserId", userId);
         boolean isMentor = userDetails.getAuthorities().stream()

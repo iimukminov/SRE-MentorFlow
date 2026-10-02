@@ -26,7 +26,7 @@ public class RoadmapUiController {
 
     @GetMapping("/roadmap")
     public String getRoadmapsPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        Long currentUserId = userDetails.getUser().getId();
+        Long currentUserId = userDetails.getId();
         model.addAttribute("currentUserId", currentUserId);
 
         boolean isMentor = userDetails.getAuthorities().stream()

@@ -15,7 +15,7 @@ public class NetworkingUiController {
 
     @GetMapping("/board")
     public String getBoardPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        model.addAttribute("currentUserId", userDetails.getUser().getId());
+        model.addAttribute("currentUserId", userDetails.getId());
 
         boolean isMentor = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().contains("MENTOR"));
@@ -26,7 +26,7 @@ public class NetworkingUiController {
 
     @GetMapping("/notifications")
     public String getNotificationsPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        model.addAttribute("currentUserId", userDetails.getUser().getId());
+        model.addAttribute("currentUserId", userDetails.getId());
         return "notifications";
     }
 }
