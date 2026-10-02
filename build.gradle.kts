@@ -38,6 +38,8 @@ dependencies {
     implementation("io.swagger.core.v3:swagger-annotations:2.2.25")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
