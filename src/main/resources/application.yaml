@@ -1,11 +1,11 @@
 spring:
   application:
-    name: semester-work-spring-iimukminov
+    name: sre-mentorflow
 
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
-    cache: false
+    cache: ${FREEMARKER_CACHE:false}
     charset: UTF-8
 
   datasource:
@@ -20,10 +20,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: ${DB_SHOW_SQL:false}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${DB_FORMAT_SQL:false}
         dialect: org.hibernate.dialect.PostgreSQLDialect
   data:
     redis:
@@ -33,12 +33,12 @@ spring:
 app:
   redis:
     cache:
-      ttl-minutes: 1m
+      ttl-minutes: ${CACHE_TTL_MINUTES:1m}
   github:
     client:
-      connect-timeout: 10s
-      read-timeout: 10s
-      sync-interval: 10m
+      connect-timeout: ${GITHUB_CONNECT_TIMEOUT:10s}
+      read-timeout: ${GITHUB_READ_TIMEOUT:10s}
+      sync-interval: ${GITHUB_SYNC_INTERVAL:10m}
       token: ${GITHUB_TOKEN}
 
 server:
