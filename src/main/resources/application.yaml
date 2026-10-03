@@ -2,9 +2,6 @@ spring:
   application:
     name: sre-mentorflow
 
-  session:
-    store-type: ${SESSION_STORE_TYPE:redis}
-
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl

@@ -23,12 +23,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query(value = "INSERT INTO user_connections (mentor_id, mentee_id) VALUES (:mentorId, :menteeId) ON CONFLICT DO NOTHING", nativeQuery = true)
     void addConnection(@Param("mentorId") Long mentorId, @Param("menteeId") Long menteeId);
-
-    @Query("""
-             SELECT u FROM User u WHERE u.id IN (
-             SELECT cr.sender.id FROM ConnectionRequest cr
-             WHERE cr.advertisement.author.id = :mentorId 
-             AND cr.status = 'ACCEPTED')
-            """)
-    List<User> findAllMenteesByMentorId(@Param("mentorId") Long mentorId);
 }

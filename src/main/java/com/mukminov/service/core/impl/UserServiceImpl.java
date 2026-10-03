@@ -48,11 +48,16 @@ public class UserServiceImpl implements UserService {
         Role menteeRole = roleRepository.findByName(RoleType.ROLE_MENTEE.name())
                 .orElseGet(() -> roleRepository.save(Role.builder().name(RoleType.ROLE_MENTEE.name()).build()));
 
+        String githubUsername = createDto.getGithubUsername();
+        if (githubUsername != null && githubUsername.isBlank()) {
+            githubUsername = null;
+        }
+
         User user = User.builder()
                 .username(createDto.getUsername())
                 .password(passwordEncoder.encode(createDto.getPassword()))
                 .email(createDto.getEmail())
-                .githubUsername(createDto.getGithubUsername())
+                .githubUsername(githubUsername)
                 .build();
 
         user.getRoles().add(menteeRole);
@@ -69,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getMentees(Long mentorId) {
-        return userRepository.findAllMenteesByMentorId(mentorId).stream()
+        return userRepository.findConnectedMentees(mentorId).stream()
                 .map(userMapper::toDto)
                 .toList();
     }

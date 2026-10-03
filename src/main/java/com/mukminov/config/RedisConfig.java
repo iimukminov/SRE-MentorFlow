@@ -2,7 +2,9 @@ package com.mukminov.config;
 
 import com.mukminov.properties.RedisCacheProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -15,7 +17,7 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 @RequiredArgsConstructor
-public class RedisConfig {
+public class RedisConfig implements CachingConfigurer {
 
     private final RedisCacheProperties cacheProperties;
 
@@ -26,5 +28,10 @@ public class RedisConfig {
                 .disableCachingNullValues()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
+
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return new CustomCacheErrorHandler();
     }
 }
