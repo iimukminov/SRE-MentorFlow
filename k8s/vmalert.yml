@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vmalert
+  namespace: logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vmalert
+  template:
+    metadata:
+      labels:
+        app: vmalert
+    spec:
+      containers:
+        - name: vmalert
+          image: victoriametrics/vmalert:v1.106.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-datasource.url=http://victoria-logs-service.logging.svc.cluster.local:9428"
+            - "-notifier.blackhole=true"
+            - "-rule=/etc/alerts/alerts.yml"
+            - "-httpListenAddr=:8880"
+          ports:
+            - containerPort: 8880
+              name: http
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8880
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8880
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: rules-volume
+              mountPath: /etc/alerts
+              readOnly: true
+      volumes:
+        - name: rules-volume
+          configMap:
+            name: vmalert-rules
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vmalert-service
+  namespace: logging
+spec:
+  type: ClusterIP
+  selector:
+    app: vmalert
+  ports:
+    - port: 8880
+      targetPort: 8880
+      name: http

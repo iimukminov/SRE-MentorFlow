@@ -1,0 +1,10 @@
+groups:
+  - name: MentorFlowLogsAlerts
+    type: vlogs
+    interval: 15s
+    rules:
+      - alert: MentorFlowHighErrorRate
+        expr: _time:5m level:ERROR | stats count() as error_count | filter error_count:>0
+        annotations:
+          summary: "В приложении sre-mentorflow обнаружены ошибки в логах (level=ERROR)!"
+          description: "За последние 5 минут в Victoria Logs зафиксировано {{ $value }} ошибок"

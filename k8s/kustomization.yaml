@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - config.yml
+  - postgres.yml
+  - redis.yml
+  - app.yml
+  - victoria-logs.yml
+  - vector.yml
+  - vmalert.yml
+
+configMapGenerator:
+  - name: vector-config
+    namespace: logging
+    files:
+      - vector.toml
+  - name: vmalert-rules
+    namespace: logging
+    files:
+      - alerts.yml

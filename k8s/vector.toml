@@ -1,0 +1,49 @@
+[api]
+enabled = true
+address = "0.0.0.0:8686"
+
+[sources.mentorflow_logs]
+type = "file"
+include = ["/var/log/containers/mentorflow-app-*.log"]
+read_from = "beginning"
+
+[transforms.parse_app_json]
+type = "remap"
+inputs = ["mentorflow_logs"]
+source = '''
+raw_line = string!(.message)
+
+docker_parsed, err = parse_json(raw_line)
+if err == null && exists(docker_parsed.log) {
+  inner_json, err2 = parse_json(string!(docker_parsed.log))
+  if err2 == null {
+    . = inner_json
+  } else {
+    .message = string!(docker_parsed.log)
+  }
+} else {
+  cri_parsed, err3 = parse_regex(raw_line, r'^(?P<cri_time>\S+) (?P<stream>stdout|stderr) (?P<flags>\S+) (?P<log>.*)$')
+  if err3 == null {
+    inner_json, err4 = parse_json(string!(cri_parsed.log))
+    if err4 == null {
+      . = inner_json
+    } else {
+      .message = string!(cri_parsed.log)
+    }
+  }
+}
+'''
+
+[sinks.vlogs]
+type = "elasticsearch"
+inputs = ["parse_app_json"]
+endpoints = ["http://victoria-logs-service.logging.svc.cluster.local:9428/insert/elasticsearch/"]
+api_version = "v8"
+compression = "gzip"
+healthcheck.enabled = false
+
+[sinks.vlogs.query]
+_msg_field = "message"
+_time_field = "timestamp"
+_stream_fields = "service.name,k8s.pod.name"
+_level_field = "level"
