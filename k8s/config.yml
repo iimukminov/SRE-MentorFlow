@@ -1,7 +1,15 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: mentorflow
+  labels:
+    name: mentorflow
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mentorflow-config
+  namespace: mentorflow
 data:
   POSTGRES_DB: "mentorflow_db"
   POSTGRES_URL: "jdbc:postgresql://postgres-service:5432/mentorflow_db"
@@ -12,8 +20,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mentorflow-secret
+  namespace: mentorflow
 type: Opaque
 stringData:
   POSTGRES_USER: "postgres"
   POSTGRES_PASSWORD: "qwerty007"
-  GITHUB_TOKEN: "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"
+  GITHUB_TOKEN: "github_pat_///"
