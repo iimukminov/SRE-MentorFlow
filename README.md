@@ -81,17 +81,17 @@ docker-compose down
 2. Примените все манифесты одной командой:
 
 ```bash
-kubectl apply -f k8s/
+kubectl apply -k k8s/
 ```
 
 3. Дождитесь перехода всех подов в статус `Running` (проверить можно командой `kubectl get pods -w`).
 4. Для доступа к веб-интерфейсу пробросьте порт наружу с помощью встроенной утилиты Minikube:
 
 ```bash
-minikube service mentorflow-service
+minikube service mentorflow-service -n mentorflow
 ```
 
-Для удаления всех ресурсов кластера выполните: `kubectl delete -f k8s/`
+Для удаления всех ресурсов кластера выполните: `kubectl delete -k k8s/`
 
 ## 🧩 Добавление нового функционала
 
@@ -107,5 +107,4 @@ minikube service mentorflow-service
 
 ```env
 SPRING_PROFILES_ACTIVE=local
-
 ```

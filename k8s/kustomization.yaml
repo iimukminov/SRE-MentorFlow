@@ -5,6 +5,7 @@ resources:
   - config.yml
   - postgres.yml
   - redis.yml
+  - migration.yml
   - app.yml
   - victoria-logs.yml
   - vector.yml
