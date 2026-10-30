@@ -5,6 +5,7 @@ import com.mukminov.api.generated.dto.UserDto;
 import com.mukminov.entity.Role;
 import com.mukminov.entity.User;
 import com.mukminov.mapper.UserMapper;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.model.enums.RoleType;
 import com.mukminov.repository.RoleRepository;
 import com.mukminov.repository.UserRepository;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final MentorFlowMetrics metrics;
 
     @Override
     @Transactional(readOnly = true)
@@ -63,6 +65,7 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(menteeRole);
 
         User savedUser = userRepository.save(user);
+        metrics.incrementUsersRegistered();
         return userMapper.toDto(savedUser);
     }
 

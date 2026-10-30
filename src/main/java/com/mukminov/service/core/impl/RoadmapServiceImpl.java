@@ -5,6 +5,7 @@ import com.mukminov.api.generated.dto.RoadmapDto;
 import com.mukminov.entity.Roadmap;
 import com.mukminov.entity.User;
 import com.mukminov.mapper.RoadmapMapper;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.repository.RoadmapRepository;
 import com.mukminov.repository.UserRepository;
 import com.mukminov.service.core.RoadmapService;
@@ -21,6 +22,7 @@ public class RoadmapServiceImpl implements RoadmapService {
     private final RoadmapRepository roadmapRepository;
     private final UserRepository userRepository;
     private final RoadmapMapper roadmapMapper;
+    private final MentorFlowMetrics metrics;
 
     @Override
     @Transactional
@@ -41,6 +43,7 @@ public class RoadmapServiceImpl implements RoadmapService {
                 .build();
 
         Roadmap savedRoadmap = roadmapRepository.save(roadmap);
+        metrics.incrementRoadmapsCreated();
         return roadmapMapper.toDto(savedRoadmap);
     }
 

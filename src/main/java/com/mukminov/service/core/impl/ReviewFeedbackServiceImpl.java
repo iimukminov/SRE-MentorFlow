@@ -6,6 +6,7 @@ import com.mukminov.entity.ReviewFeedback;
 import com.mukminov.entity.RoadmapStep;
 import com.mukminov.entity.User;
 import com.mukminov.mapper.ReviewFeedbackMapper;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.repository.ReviewFeedbackRepository;
 import com.mukminov.repository.RoadmapStepRepository;
 import com.mukminov.repository.UserRepository;
@@ -22,6 +23,7 @@ public class ReviewFeedbackServiceImpl implements ReviewFeedbackService {
     private final RoadmapStepRepository stepRepository;
     private final UserRepository userRepository;
     private final ReviewFeedbackMapper feedbackMapper;
+    private final MentorFlowMetrics metrics;
 
     @Override
     @Transactional
@@ -45,6 +47,7 @@ public class ReviewFeedbackServiceImpl implements ReviewFeedbackService {
         if (Boolean.TRUE.equals(createDto.getIsApproved())) {
             step.setStatus(RoadmapStep.StepStatus.DONE);
             stepRepository.save(step);
+            metrics.incrementStepsCompleted();
 
             stepRepository.findByRoadmapIdAndStepOrder(step.getRoadmap().getId(), step.getStepOrder() + 1)
                     .ifPresent(nextStep -> {

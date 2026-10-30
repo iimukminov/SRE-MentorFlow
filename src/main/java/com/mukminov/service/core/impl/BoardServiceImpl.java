@@ -3,6 +3,7 @@ package com.mukminov.service.core.impl;
 import com.mukminov.api.generated.dto.*;
 import com.mukminov.entity.*;
 import com.mukminov.mapper.*;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.repository.*;
 import com.mukminov.service.core.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final AdvertisementMapper adMapper;
     private final ConnectionRequestMapper reqMapper;
+    private final MentorFlowMetrics metrics;
 
     @Override
     @Transactional(readOnly = true)
@@ -110,6 +112,7 @@ public class BoardServiceImpl implements BoardService {
 
             userRepository.addConnection(mentorId, menteeId);
             log.info("Match created! Mentor ID: {}, Mentee ID: {}", mentorId, menteeId);
+            metrics.incrementMatchesCreated();
 
             ad.setStatus(Advertisement.AdStatus.CLOSED);
             adRepository.save(ad);

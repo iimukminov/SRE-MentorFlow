@@ -49,14 +49,24 @@ server:
   shutdown: graceful
 
 management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:8081}
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info,metrics,prometheus
   endpoint:
+    prometheus:
+      access: unrestricted
     health:
       probes:
         enabled: true
       group:
         readiness:
           include: readinessState,db
+  metrics:
+    tags:
+      application: sre-mentorflow
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true

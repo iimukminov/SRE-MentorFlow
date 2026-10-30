@@ -5,6 +5,7 @@ import com.mukminov.client.GitHubClient;
 import com.mukminov.entity.Consultation;
 import com.mukminov.entity.RoadmapStep;
 import com.mukminov.mapper.RoadmapStepMapper;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.repository.ConsultationRepository;
 import com.mukminov.repository.RoadmapStepRepository;
 import com.mukminov.service.integration.GitHubSyncService;
@@ -27,20 +28,23 @@ public class GitHubSyncServiceImpl implements GitHubSyncService {
     private final ConsultationRepository consultationRepository;
     private final RoadmapStepMapper stepMapper;
     private final GitHubClient gitHubClient;
+    private final MentorFlowMetrics metrics;
 
     @Override
     public void syncActiveSteps() {
-        List<RoadmapStep> activeSteps = stepRepository.findAllByStatusWithMentee(RoadmapStep.StepStatus.IN_PROGRESS);
-        
-        if (activeSteps.isEmpty()) {
-            log.debug("No active roadmap steps found for GitHub sync.");
-            return;
-        }
-
-        log.info("Processing {} active steps for GitHub sync.", activeSteps.size());
-
-        for (RoadmapStep step : activeSteps) {
-            processStep(step);
+        long startTime = System.currentTimeMillis();
+        try {
+            List<RoadmapStep> activeSteps = stepRepository.findAllByStatusWithMentee(RoadmapStep.StepStatus.IN_PROGRESS);
+            if (activeSteps.isEmpty()) {
+                log.debug("No active roadmap steps found for GitHub sync.");
+                return;
+            }
+            log.info("Processing {} active steps for GitHub sync.", activeSteps.size());
+            for (RoadmapStep step : activeSteps) {
+                processStep(step);
+            }
+        } finally {
+            metrics.recordGitHubSyncDuration(System.currentTimeMillis() - startTime);
         }
     }
 

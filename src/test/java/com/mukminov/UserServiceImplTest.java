@@ -5,6 +5,7 @@ import com.mukminov.api.generated.dto.UserDto;
 import com.mukminov.entity.Role;
 import com.mukminov.entity.User;
 import com.mukminov.mapper.UserMapper;
+import com.mukminov.metrics.MentorFlowMetrics;
 import com.mukminov.repository.RoleRepository;
 import com.mukminov.repository.UserRepository;
 import com.mukminov.service.core.impl.UserServiceImpl;
@@ -28,6 +29,7 @@ class UserServiceImplTest {
     @Mock private RoleRepository roleRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private UserMapper userMapper;
+    @Mock private MentorFlowMetrics metrics;
 
     @InjectMocks
     private UserServiceImpl userService;
