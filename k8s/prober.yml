@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mentorflow-prober
+  namespace: mentorflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mentorflow-prober
+  template:
+    metadata:
+      labels:
+        app: mentorflow-prober
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: prober
+          image: python:3.11-alpine
+          command: ["python3", "/app/prober.py"]
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "20m"
+              memory: "32Mi"
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
+          volumeMounts:
+            - name: prober-script
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: prober-script
+          configMap:
+            name: mentorflow-prober-script

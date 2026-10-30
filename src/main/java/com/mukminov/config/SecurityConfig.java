@@ -23,6 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/chaos/**"))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 "/actuator/health",
@@ -31,8 +32,16 @@ public class SecurityConfig {
                                 "/actuator/metrics",
                                 "/actuator/metrics/**"
                         ).permitAll()
-                        .requestMatchers("/", "/index", "/login", "/register", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
+                        .requestMatchers(
+                                "/",
+                                "/index",
+                                "/login",
+                                "/register",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/v1/chaos/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/roadmaps", "/api/v1/roadmaps/**", "/api/v1/steps/**").hasRole("MENTOR")

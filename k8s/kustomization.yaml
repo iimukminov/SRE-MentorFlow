@@ -10,6 +10,7 @@ resources:
   - victoria-logs.yml
   - vector.yml
   - vmalert.yml
+  - prober.yml
 
 configMapGenerator:
   - name: vector-config
@@ -20,3 +21,7 @@ configMapGenerator:
     namespace: logging
     files:
       - alerts.yml
+  - name: mentorflow-prober-script
+    namespace: mentorflow
+    files:
+      - prober.py
